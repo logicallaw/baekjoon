@@ -1,13 +1,30 @@
+//에라토스테네스의 채
 #include <iostream>
-/*
-m이상 n이하의 소수만 출력하는 프로그램이다.
-unsigned int m과 n을 입력받는다.
-소수가 한줄씩 출력된다.
-
-논리
-m부터 n까지 차례대로 순회한다.
-소수는 1과 자기자신의 수만 약수를 갖는 수이다.
-즉, 2부터 돌면서 2이상의 수 중에서 나누어떨어지면 순회를 멈추고 합성수로 배제시킨다.
-만약, 큰 소수면 계속 돌아야돼서 런타임 오류 발생한다.
-
-*/
+#include <vector>
+using namespace std;
+void printPrime(int& idx1, int& idx2) {
+	vector<bool> nums(idx2, true);
+	for (int i{ 2 }; i <= idx2; i++) {
+		if (nums[i - 1] == false)
+			continue;
+		/*
+		i의 배수가 존재하면 false
+		i의 배수의 개수 = idx2 / i
+		*/
+		for (int j{ 2 }; j <= idx2 / i; j++)
+			nums[i * j - 1] = false;
+	}
+	for (int i{ idx1 }; i <= idx2; i++)
+		if (nums[i - 1])
+			cout << i << "\n"; //endl 사용하면 시간초과. 반드시 "\n" 사용.
+}
+int main(void) {
+	int idx1, idx2;
+	cin >> idx1 >> idx2;
+	//1은 소수도 합성수도 아니다.
+	if (idx1 == 1)
+		printPrime(++idx1, idx2);
+	else
+		printPrime(idx1, idx2);
+	return 0;
+}
