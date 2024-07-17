@@ -13,17 +13,19 @@
     private:
         IntNode* root;
         vector<IntNode*> nodes;
-        int leef = 0;
+        int leaf = 0;
     public:
         Tree() {
             root = NULL;
         }
         ~Tree() {
-            for(std::vector<IntNode*>::size_type i{ 0 }; i < nodes.size(); i++) {
+            for(int i{ 0 }; i < nodes.size(); i++) {
                 delete nodes[i];
             }
         }
         bool isExternal(IntNode* v) const { return v->child.size() == 0; }
+        int getLeafs() const { return leaf; }
+        IntNode* getRoot() const { return root; }
         IntNode* findNode(int e) const {
             for(int i{ 0 }; i < nodes.size(); i++) {
                 if(nodes[i]->ele == e) {
@@ -47,27 +49,36 @@
                 newNode->ele = i;
                 parNode->child.push_back(newNode);
                 nodes.push_back(newNode);
+            } else {
+                return;
             }
         }
         void erase(int x) {
-            if(x == 0) {
+            if(root->ele == x) {
                 root = NULL;
-            } else { //부모 모두 존재
-                IntNode* old = findNode(x);
-                //노드의 부모의 자식에서 삭제
-                for(int i{ 0 }; i < old->par->child.size(); i++) {
-                    if(old->par->child[i] == old) {
-                        old->par->child.erase(old->par->child.begin() + i);
-                        break;
-                    }
-                }
+            } else {
+                IntNode* delNode = findNode(x);
+                if(delNode == NULL) return;
+                IntNode* parNode = delNode->par;
+                bool isDeleted = false;
                 //nodes에서 삭제
                 for(int i{ 0 }; i < nodes.size(); i++) {
-                    if(nodes[i] == old) {
+                    if(isDeleted) break;
+                    if(nodes[i] == delNode) {
                         nodes.erase(nodes.begin() + i);
-                        break;
+                        isDeleted = true;
                     }
                 }
+                //parent-child 연결 해제
+                isDeleted = false;
+                for(int i{ 0 }; i < parNode->child.size(); i++) {
+                    if(isDeleted) break;
+                    if(parNode->child[i] == delNode) {
+                        parNode->child.erase(parNode->child.begin() + i);
+                        isDeleted = true;
+                    }
+                }
+                delete delNode;
             }
         }
         void postOrder(IntNode* v) {
@@ -75,27 +86,28 @@
                 postOrder(c);
             }
             if(isExternal(v)) {
-                leef++;
+                leaf++;
             }
-        }
-        void printleef(){
-            if(root != NULL) {
-                postOrder(root);
-            }
-            cout << leef << endl;
         }
     };
     int main(void) {
         int n;
         cin >> n;
-        Tree tree;
+        Tree t;
+
         for(int i{ 0 }; i < n; i++){
             int x;
             cin >> x;
-            tree.insert(x, i);
+            t.insert(x, i);
         }
+
         int x;
         cin >> x;
-        tree.erase(x);
-        tree.printleef();
+        t.erase(x);
+
+        IntNode* r = t.getRoot();
+        if(r != NULL) {
+            t.postOrder(r);
+        }
+        cout << t.getLeafs() << endl;
     }
