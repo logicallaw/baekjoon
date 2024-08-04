@@ -1,26 +1,34 @@
 #include <iostream>
 using namespace std;
-
-int main(void)
-{
-	int num;
-	cin >> num;
-	num -= num % 5;
-	cout << num / 5;
+int isMultipleOfTwo(int num) {
+    int cnt = 0;
+    while(num % 2 == 0) {
+        cnt++;
+        num /= 2;
+    }
+    return cnt;
 }
-/*
-5
-25
-125
-if(num>=1 && num <5)
-	0
+int isMultipleOfFive(int num) {
+    int cnt = 0;
+    while(num % 5 == 0) {
+        cnt++;
+        num /= 5;
+    }
+    return cnt;
+}
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+int main(void) {
+    int n;
+    cin >> n;
 
-*/
-
-/*
-nÀÇ °ª 13 / 5 = 3
-
-26 / 5 1
-num -= (num % 5);
-cout << num / 5
-*/
+    int cntOfTwo = 0;
+    int cntOfFive = 0;
+    for(int i{ n }; i >= 2; i--) {
+        cntOfTwo += isMultipleOfTwo(i);
+        cntOfFive += isMultipleOfFive(i);
+    }
+    cout << min(cntOfTwo, cntOfFive);
+    return 0;
+}
