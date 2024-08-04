@@ -1,57 +1,34 @@
 #include <iostream>
+#include <stack>
+#include <vector>
 using namespace std;
-template<typename T>
-class Stack{
-private:
-    T* stack;
-    int n;
-public:
-    Stack(int size) : stack{ new T[ size] }, n{ -1 } {}
-    ~Stack() {
-        delete[] stack;
-    }
-    void push(T v){
-        stack[++n] = v;
-    }
-    T pop() {
-        return stack[n--];
-    }
-};
-int main(void){
+int main(void) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
     int n;
     cin >> n;
-    Stack<int> s(n);
-    Stack<int> l(n);
-    Stack<string> r(n);
-    int cnt = 0;
-    int copy_n = n;
-    while(copy_n--){
-        int temp;
-        cin >> temp;
-        if(cnt == n){
-            int r1 = s.pop();
-            int r2 = temp;
-            if(r1 > temp){
-                cout << "NO" << endl;
-
+    stack<int> s;
+    vector<char> ans;
+    int num = 1;
+    for(int i{ 0 }; i < n; i++) {
+        int x;
+        cin >> x;
+        if(num <= x){
+            while(num <= x) {
+                s.push(num++); ans.push_back('+');
             }
-            cout << "-" << endl;
-            continue;
-        }
-        if(cnt <= temp){
-            int ldx = temp - cnt;
-            for(int i{ 0 }; i < ldx; i++){
-                s.push(++cnt);
-                cout << "+" << endl;
-            }
-            l.push(s.pop());
-            cout << "-" << endl;
-        } else if (cnt > temp){
-            for(int i{ 0 }; i < (cnt - temp); i++) {
-                l.push(s.pop());
-                cout << "-" << endl;
+            s.pop(); ans.push_back('-');
+        } else { // num > x
+            if(!s.empty() && s.top() == x) {
+                s.pop(); ans.push_back('-');
+            } else {
+                cout << "NO";
+                return 0;
             }
         }
+    }
+    for(vector<char>::iterator it = ans.begin(); it != ans.end(); it++) {
+        printf("%c\n", *it);
     }
     return 0;
 }
