@@ -1,35 +1,39 @@
 #include <iostream>
-#include <count.h>
 using namespace std;
+
 int arr[100][100] {};
 int n;
+int cnt = 0;
+
+void dfs(int, int, int);
 
 bool isRange(int x, int y) {
     if(x >= 0 && x < n) {
-        if (y >= 0 && y < n) {
+        if(y >= 0 && y < n) {
             return true;
         }
     }
     return false;
 }
 
-void dfs(const int k, int x, int y) {
-    if(arr[x][y] == k) {
+void dfs(int x, int y) {
+    if(arr[x][y] == 1) {
         arr[x][y] = 0;
+        cnt++;
     } else {
         return;
     }
     if(isRange(x-1, y)) {
-        dfs(k, x-1, y);
+        dfs(x-1, y);
     }
     if (isRange(x+1, y)) {
-        dfs(k, x+1, y);
+        dfs(x+1, y);
     }
     if (isRange(x, y-1)) {
-        dfs(k, x, y-1);
+        dfs(x, y-1);
     }
     if (isRange(x, y + 1)) {
-        dfs(k, x, y+1);
+        dfs(x, y+1);
     }
 }
 
@@ -41,26 +45,30 @@ int main() {
             cin >> arr[i][j];
         }
     }
-    int result[3] {};
+    int result = 0;
     for(int i{ 0 }; i < n; i++) {
         for(int j{ 0 }; j < n; j++) {
-            int temp = arr[i][j];
-            if (temp == 0) {
-                continue;
+//            if(arr[i][j] != 0 && solution(i, j)) {
+//                result++;
+//            }
+            if(arr[i][j] == 1) {
+                dfs(i, j);
+                if(cnt == 3) {
+                    result++;
+                }
+                cnt = 0;
             }
-            dfs(temp, i, j);
-            result[temp - 1]++;
         }
     }
-
-    cout << result[0] << " " << result[1] << " " << result[2];
+    cout << result;
     return 0;
 }
+
 /*
 5
-2 2 1 1 2
-2 2 1 1 1
-2 2 3 1 1
-2 1 3 3 3
-1 1 1 3 2
+1 1 0 1 1
+1 0 1 0 1
+0 0 1 1 1
+1 1 0 0 1
+0 1 0 1 1
  */
