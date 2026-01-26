@@ -4,4 +4,5 @@ project(baekjoon)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(baekjoon
-        31403.cpp)
+        5525.cpp
+)
