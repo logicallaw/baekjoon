@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# === 설정 ===
+COMPILER="g++"  # 만약 brew로 설치한 gcc를 쓴다면 "g++-13" 등으로 변경
+STD_VER="-std=c++17"
+OPT_LEVEL="-O2"
+# 경고 플래그: PS에서 실수하기 쉬운 부분들을 잡아줌
+FLAGS="-Wall -Wextra -Wno-unused-result"
+PYTHON_RUNNER="./ps_runner.py" # 위 파이썬 파일 경로
+
+# 파일명 확인
+if [ -z "$1" ]; then
+    echo "Usage: crun <source_file.cpp>"
+    exit 1
+fi
+
+SRC="$1"
+# 확장자가 없으면 .cpp 붙여줌
+if [[ "$SRC" != *.cpp ]]; then
+    SRC="$SRC.cpp"
+fi
+
+# 실행 파일명 (확장자 떼고 생성)
+EXE="${SRC%.*}"
+
+echo "Compiling $SRC ($STD_VER, $OPT_LEVEL)..."
+
+# 컴파일 수행
+$COMPILER $STD_VER $OPT_LEVEL $FLAGS "$SRC" -o "$EXE"
+
+# 컴파일 성공 시 실행
+if [ $? -eq 0 ]; then
+    echo "---------------------------------------------------"
+    echo "Running... (Input: Default / Output: Cyan)"
+    echo "---------------------------------------------------"
+    
+    # 파이썬 래퍼를 통해 실행
+    python3 "$PYTHON_RUNNER" "./$EXE"
+    
+    # 종료 후 정리
+    echo -e "\n---------------------------------------------------"
+    echo "Process finished."
+    rm -f "$EXE" # (선택) 실행 후 바이너리 삭제하여 깔끔하게 유지
+else
+    echo "Compilation Failed."
+    exit 1
+fi
